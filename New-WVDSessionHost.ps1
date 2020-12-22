@@ -1,29 +1,3 @@
-<#Author       : Dean Cefola
-# Creation Date: 09-15-2019
-# Usage        : Windows Virtual Desktop Scripted Install
-
-#********************************************************************************
-# Date                         Version      Changes
-#------------------------------------------------------------------------
-# 09/15/2019                     1.0        Intial Version
-# 09/16/2019                     2.0        Add FSLogix installer
-# 09/16/2019                     2.1        Add FSLogix Reg Keys 
-# 09/16/2019                     2.2        Add Input Parameters 
-# 09/16/2019                     2.3        Add TLS 1.2 settings
-# 09/17/2019                     3.0        Chang download locations to dynamic
-# 09/17/2019                     3.1        Add code to disable IESEC for admins
-# 09/20/2019                     3.2        Add code to discover OS (Server / Client)
-# 09/20/2019                     4.0        Add code for servers to add RDS Host role
-# 10/01/2019                     4.2        Add all FSLogix Profile Container Reg entries for easier management
-# 10/07/2019                     4.3        Add FSLogix Office Container Reg entries for easier management
-# 10/16/2019                     5.0        Add Windows 7 Support
-# 07/20/2020                     6.0        Add WVD Optimize Code from The-Virtual-Desktop-Team
-# 10/27/2020                     7.0        Optimize FSLogix settings - Remove Office Profile Settings
-#
-#*********************************************************************************
-#
-#>
-
 
 ##############################
 #    WVD Script Parameters   #
@@ -44,8 +18,6 @@ Param (
 $LocalWVDpath            = "c:\temp\wvd\"
 $WVDBootURI              = 'https://query.prod.cms.rt.microsoft.com/cms/api/am/binary/RWrxrH'
 $WVDAgentURI             = 'https://query.prod.cms.rt.microsoft.com/cms/api/am/binary/RWrmXv'
-$FSLogixURI              = 'https://aka.ms/fslogix_download'
-$FSInstaller             = 'FSLogixAppsSetup.zip'
 $WVDAgentInstaller       = 'WVD-Agent.msi'
 $WVDBootInstaller        = 'WVD-Bootloader.msi'
 $Win7x64_UpdateURI       = 'https://download.microsoft.com/download/A/F/5/AF5C565C-9771-4BFB-973B-4094C1F58646/Windows6.1-KB2592687-x64.msu'                                        
@@ -104,24 +76,8 @@ Optimize          = $Optimize
 #################################
 Add-Content -LiteralPath C:\New-WVDSessionHost.log "Downloading WVD Boot Loader"
     Invoke-WebRequest -Uri $WVDBootURI -OutFile "$LocalWVDpath$WVDBootInstaller"
-Add-Content -LiteralPath C:\New-WVDSessionHost.log "Downloading FSLogix"
-    Invoke-WebRequest -Uri $FSLogixURI -OutFile "$LocalWVDpath$FSInstaller"
 Add-Content -LiteralPath C:\New-WVDSessionHost.log "Downloading WVD Agent"
     Invoke-WebRequest -Uri $WVDAgentURI -OutFile "$LocalWVDpath$WVDAgentInstaller"
-
-
-##############################
-#    Prep for WVD Install    #
-##############################
-Add-Content -LiteralPath C:\New-WVDSessionHost.log "Unzip FSLogix"
-Expand-Archive `
-    -LiteralPath "C:\temp\wvd\$FSInstaller" `
-    -DestinationPath "$LocalWVDpath\FSLogix" `
-    -Force `
-    -Verbose
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-cd $LocalWVDpath 
-Add-Content -LiteralPath C:\New-WVDSessionHost.log "UnZip FXLogix Complete"
 
 
 ##############################
@@ -235,81 +191,6 @@ Add-Content -LiteralPath C:\New-WVDSessionHost.log "WVD Agent Install Complete"
 Wait-Event -Timeout 5
 
 
-#########################
-#    FSLogix Install    #
-#########################
-Add-Content -LiteralPath C:\New-WVDSessionHost.log "Installing FSLogix"
-$fslogix_deploy_status = Start-Process `
-    -FilePath "$LocalWVDpath\FSLogix\x64\Release\FSLogixAppsSetup.exe" `
-    -ArgumentList "/install /quiet" `
-    -Wait `
-    -Passthru
-
-
-#######################################
-#    FSLogix User Profile Settings    #
-#######################################
-Add-Content -LiteralPath C:\New-WVDSessionHost.log "Configure FSLogix Profile Settings"
-Push-Location 
-Set-Location HKLM:\SOFTWARE\
-New-Item `
-    -Path HKLM:\SOFTWARE\FSLogix `
-    -Name Profiles `
-    -Value "" `
-    -Force
-New-Item `
-    -Path HKLM:\Software\FSLogix\Profiles\ `
-    -Name Apps `
-    -Force
-Set-ItemProperty `
-    -Path HKLM:\Software\FSLogix\Profiles `
-    -Name "Enabled" `
-    -Type "Dword" `
-    -Value "1"
-New-ItemProperty `
-    -Path HKLM:\Software\FSLogix\Profiles `
-    -Name "VHDLocations" `
-    -Value $ProfilePath `
-    -PropertyType MultiString `
-    -Force
-Set-ItemProperty `
-    -Path HKLM:\Software\FSLogix\Profiles `
-    -Name "SizeInMBs" `
-    -Type "Dword" `
-    -Value "30000"
-Set-ItemProperty `
-    -Path HKLM:\Software\FSLogix\Profiles `
-    -Name "IsDynamic" `
-    -Type "Dword" `
-    -Value "1"
-Set-ItemProperty `
-    -Path HKLM:\Software\FSLogix\Profiles `
-    -Name "VolumeType" `
-    -Type String `
-    -Value "vhdx"
-Set-ItemProperty `
-    -Path HKLM:\Software\FSLogix\Profiles `
-    -Name "FlipFlopProfileDirectoryName" `
-    -Type "Dword" `
-    -Value "1" 
-Set-ItemProperty `
-    -Path HKLM:\Software\FSLogix\Profiles `
-    -Name "SIDDirNamePattern" `
-    -Type String `
-    -Value "%username%%sid%"
-Set-ItemProperty `
-    -Path HKLM:\Software\FSLogix\Profiles `
-    -Name "SIDDirNameMatch" `
-    -Type String `
-    -Value "%username%%sid%"
-Set-ItemProperty `
-    -Path HKLM:\Software\FSLogix\Profiles `
-    -Name DeleteLocalProfileWhenVHDShouldApply `
-    -Type DWord `
-    -Value 1
-Pop-Location
-
-
 
 ##############################################
 #    WVD Optimizer (Virtual Desktop Team)    #
@@ -347,7 +228,7 @@ If ($Optimize -eq $true) {
     #################################
     Add-Content -LiteralPath C:\New-WVDSessionHost.log "Begining Optimize"
     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force -Verbose
-    .\Win10_VirtualDesktop_Optimize.ps1 -WindowsVersion 2004 -Verbose
+    .\Win10_VirtualDesktop_Optimize.ps1 -WindowsVersion 1909 -Verbose
     Add-Content -LiteralPath C:\New-WVDSessionHost.log "Optimization Complete"
 }
 else {
