@@ -238,5 +238,5 @@ else {
 ##########################
 #    Restart Computer    #
 ##########################
-Add-Content -LiteralPath C:\New-WVDSessionHost.log "Process Complete - REBOOT"
+Add-Content -LiteralPath C:\New-WVDSessionHost1.log "Process Complete - REBOOT"
 Restart-Computer -Force 
