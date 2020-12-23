@@ -4,7 +4,7 @@
 ##############################
 Param (        
     [Parameter(Mandatory=$true)]
-        [string]$RegistrationToken,        
+        [string]$RegistrationToken      
 )
 
 
