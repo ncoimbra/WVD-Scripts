@@ -63,7 +63,6 @@ New-Item -Path c:\ -Name New-WVDSessionHost.log -ItemType File
 Add-Content `
 -LiteralPath C:\New-WVDSessionHost.log `
 "
-ProfilePath       = $ProfilePath
 RegistrationToken = $RegistrationToken
 Optimize          = $Optimize
 "
