@@ -4,9 +4,7 @@
 ##############################
 Param (        
     [Parameter(Mandatory=$true)]
-        [string]$RegistrationToken,
-    [Parameter(Mandatory=$false)]
-        [string]$Optimize = $true           
+        [string]$RegistrationToken,        
 )
 
 
@@ -64,7 +62,6 @@ Add-Content `
 -LiteralPath C:\New-WVDSessionHost.log `
 "
 RegistrationToken = $RegistrationToken
-Optimize          = $Optimize
 "
 
 
@@ -188,54 +185,8 @@ Add-Content -LiteralPath C:\New-WVDSessionHost.log "WVD Agent Install Complete"
 Wait-Event -Timeout 5
 
 
-
-##############################################
-#    WVD Optimizer (Virtual Desktop Team)    #
-##############################################
-If ($Optimize -eq $true) {  
-    Write-Output "Optimizer selected"  
-    ################################
-    #    Download WVD Optimizer    #
-    ################################
-    Add-Content -LiteralPath C:\New-WVDSessionHost.log "Optimize Selected"
-    Add-Content -LiteralPath C:\New-WVDSessionHost.log "Creating C:\Optimize folder"
-    New-Item -Path C:\ -Name Optimize -ItemType Directory -ErrorAction SilentlyContinue
-    $LocalOptimizePath = "C:\Optimize\"
-    $WVDOptimizeURL = 'https://github.com/The-Virtual-Desktop-Team/Virtual-Desktop-Optimization-Tool/archive/master.zip'
-    $WVDOptimizeInstaller = "Windows_10_VDI_Optimize-master.zip"
-    Invoke-WebRequest `
-        -Uri $WVDOptimizeURL `
-        -OutFile "$LocalOptimizePath$WVDOptimizeInstaller"
-
-
-    ###############################
-    #    Prep for WVD Optimize    #
-    ###############################
-    Add-Content -LiteralPath C:\New-WVDSessionHost.log "Optimize downloaded and extracted"
-    Expand-Archive `
-        -LiteralPath "C:\Optimize\Windows_10_VDI_Optimize-master.zip" `
-        -DestinationPath "$LocalOptimizePath" `
-        -Force `
-        -Verbose
-    Set-Location -Path C:\Optimize\Virtual-Desktop-Optimization-Tool-master
-
-
-    #################################
-    #    Run WVD Optimize Script    #
-    #################################
-    Add-Content -LiteralPath C:\New-WVDSessionHost.log "Begining Optimize"
-    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force -Verbose
-    .\Win10_VirtualDesktop_Optimize.ps1 -WindowsVersion 1909 -Verbose
-    Add-Content -LiteralPath C:\New-WVDSessionHost.log "Optimization Complete"
-}
-else {
-    Write-Output "Optimize not selected"
-    Add-Content -LiteralPath C:\New-WVDSessionHost.log "Optimize NOT selected"    
-}
-
-
 ##########################
 #    Restart Computer    #
 ##########################
-Add-Content -LiteralPath C:\New-WVDSessionHost1.log "Process Complete - REBOOT"
+Add-Content -LiteralPath C:\New-WVDSessionHost.log "Process Complete - REBOOT"
 Restart-Computer -Force 
