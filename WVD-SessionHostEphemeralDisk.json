@@ -224,6 +224,28 @@
         "WVD-Copy"
       ]
     },
+     {
+  "type": "Microsoft.Compute/virtualMachines/extensions",
+              "name": "[concat(variables('VMName'),copyIndex(), '/networkWatcherAgent')]",
+    "apiVersion": "2015-06-15",
+    "location": "[resourceGroup().location]",
+	 "copy": {
+                "name": "networkWatcherAgent-Copy",
+                "count": "[parameters('Instance')]"
+            },
+	"tags": {
+                "Creado Por": "Nicolas Coimbra"
+            },
+    "properties": {
+        "publisher": "Microsoft.Azure.NetworkWatcher",
+        "type": "NetworkWatcherAgentWindows",
+        "typeHandlerVersion": "1.4",
+        "autoUpgradeMinorVersion": true
+    },
+	 "dependsOn": [
+                "WVD-Copy"
+            ]
+},
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(variables('VMName'),copyIndex(),'/CustomScriptExtension')]",
