@@ -268,7 +268,10 @@
         "type": "NetworkWatcherAgentWindows",
         "typeHandlerVersion": "1.4",
         "autoUpgradeMinorVersion": true
-                  }
+                  },
+	  "dependsOn": [
+        "WVD-Copy"
+      ]
 }	   
   ],
   "outputs": {
