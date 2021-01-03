@@ -51,12 +51,10 @@
                 "value": "Standard_D4as_v4"
         },
         "adminUsername": {
-            "type": "string",
-               "value": "readymindadmin"
+            "type": "string"
         },
         "adminPassword": {
-            "type": "secureString",
-              "value": null
+            "type": "secureString"
         },
         "patchMode": {
             "type": "string",
