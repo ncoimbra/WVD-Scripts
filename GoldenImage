@@ -4,51 +4,51 @@
     "parameters": {
         "location": {
             "type": "string",
-                    "value": "centralus"
+                    "defaultValue": "centralus"
         },
         "networkInterfaceName": {
             "type": "string",
-                       "value": "golden100"
+                       "defaultValue": "golden100"
         },
         "subnetName": {
             "type": "string",
-                    "value": "Subnet-GoldenImage"
+                    "defaultValue": "Subnet-GoldenImage"
         },
         "virtualNetworkId": {
             "type": "string",
-                   "value": "/subscriptions/4c3d962d-a748-4e38-ac25-3c27be20f14b/resourceGroups/READYMIND-RG-WVD-CUS/providers/Microsoft.Network/virtualNetworks/READYMIND-VNET-WVD-CUS"
+                   "defaultValue": "/subscriptions/4c3d962d-a748-4e38-ac25-3c27be20f14b/resourceGroups/READYMIND-RG-WVD-CUS/providers/Microsoft.Network/virtualNetworks/READYMIND-VNET-WVD-CUS"
         },
         "publicIpAddressName": {
             "type": "string",
-                        "value": "GOLDEN-ip"
+                        "defaultValue": "GOLDEN-ip"
         },
         "publicIpAddressType": {
             "type": "string",
-                 "value": "Dynamic"
+                 "defaultValue": "Dynamic"
         },
         "publicIpAddressSku": {
             "type": "string",
-              "value": "Basic"
+              "defaultValue": "Basic"
         },
         "virtualMachineName": {
             "type": "string",
-             "value": "GOLDEN"
+             "defaultValue": "GOLDEN"
         },
         "virtualMachineComputerName": {
             "type": "string",
-             "value": "GOLDEN"
+             "defaultValue": "GOLDEN"
         },
         "virtualMachineRG": {
             "type": "string",
-               "value": "READYMIND-RG-WVD-GALLERY-CUS"
+               "defaultValue": "READYMIND-RG-WVD-GALLERY-CUS"
         },
         "osDiskType": {
             "type": "string",
-             "value": "Premium_LRS"
+             "defaultValue": "Premium_LRS"
         },
         "virtualMachineSize": {
             "type": "string",
-                "value": "Standard_D4as_v4"
+                "defaultValue": "Standard_D4as_v4"
         },
         "adminUsername": {
             "type": "string"
@@ -58,7 +58,7 @@
         },
         "patchMode": {
             "type": "string",
-              "value": "Manual"
+              "defaultValue": "Manual"
         }
     },
     "variables": {
@@ -155,7 +155,7 @@
     "outputs": {
         "adminUsername": {
             "type": "string",
-            "value": "[parameters('adminUsername')]"
+            "defaultValue": "[parameters('adminUsername')]"
         }
     }
 }
